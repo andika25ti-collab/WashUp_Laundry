@@ -3,244 +3,201 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $cv?->name ?? 'Curriculum Vitae' }} | CV Space</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('resume/assets/img/favicon.ico') }}">
-    <link rel="stylesheet" href="{{ asset('assets-admin/vendor/bootstrap/dist/css/bootstrap.min.css') }}">
-    <link href="https://fonts.googleapis.com/css?family=DM+Sans:400,500,600,700,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('resume/css/crud.css') }}">
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <meta name="description" content="Pratinjau dashboard admin WashUp Laundry.">
+    <meta name="theme-color" content="#174e39">
+    <title>Dashboard Admin | WashUp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('washup/css/admin-dashboard.css') }}">
 </head>
 <body>
-    @php
-        $profile = $cv;
-        $experienceItems = $cv?->experience ? array_filter(preg_split('/\r\n|\r|\n/', trim($cv->experience))) : [];
-        $educationItems = $cv?->education ? array_filter(preg_split('/\r\n|\r|\n/', trim($cv->education))) : [];
-        $skillItems = $cv?->skills ? array_filter(preg_split('/\r\n|\r|\n/', trim($cv->skills))) : [];
-        $awardItems = $cv?->awards ? array_filter(preg_split('/\r\n|\r|\n/', trim($cv->awards))) : [];
-        $profilePhoto = $cv?->photo_path
-            ? asset('storage/'.$cv->photo_path)
-            : asset('resume/assets/img/profile.jpg');
-    @endphp
+    <script>
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('motion-ready');
+            requestAnimationFrame(() => document.documentElement.classList.add('page-loaded'));
+        }
+    </script>
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <a class="admin-brand" href="{{ route('landing') }}">
+                <span class="brand-mark">W</span>
+                <span>Wash<span>Up</span></span>
+            </a>
 
-    @include('admin.partials.resume-nav')
-
-    <main class="modern-main">
-        <header class="dashboard-header" id="overview">
-            <div>
-                <span class="eyebrow">PERSONAL WORKSPACE</span>
-                <h1>Halo, {{ $cv?->name ?? 'teman' }} <span aria-hidden="true">👋</span></h1>
-                <p>Ringkasan perjalanan, pengalaman, dan keahlianmu dalam satu tempat.</p>
-            </div>
-            <div class="header-actions">
-                <span class="today-label"><i class="fa-regular fa-calendar" aria-hidden="true"></i> Curriculum Vitae</span>
-                @if ($cv)
-                    <a class="btn btn-primary modern-button" href="{{ route('resume') }}">
-                        <i class="fa-solid fa-eye me-2" aria-hidden="true"></i>Lihat CV
-                    </a>
-                    <a class="header-avatar" href="{{ route('biodata.edit', $cv) }}" aria-label="Edit profil CV">
-                        <img src="{{ $profilePhoto }}" alt="Foto {{ $cv->name }}">
-                    </a>
-                @endif
-            </div>
-        </header>
-
-        @if (session('success'))
-            <div class="alert alert-success modern-alert" role="status">{{ session('success') }}</div>
-        @endif
-
-        <section class="summary-grid" aria-label="Ringkasan CV">
-            <article class="summary-card">
-                <span class="summary-icon icon-blue"><i class="fa-solid fa-briefcase" aria-hidden="true"></i></span>
-                <span class="summary-label">Pengalaman</span>
-                <strong>{{ count($experienceItems) }}</strong>
-                <span class="summary-caption">pengalaman / proyek</span>
-            </article>
-            <article class="summary-card">
-                <span class="summary-icon icon-orange"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i></span>
-                <span class="summary-label">Pendidikan</span>
-                <strong>{{ count($educationItems) }}</strong>
-                <span class="summary-caption">riwayat pendidikan</span>
-            </article>
-            <article class="summary-card">
-                <span class="summary-icon icon-teal"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
-                <span class="summary-label">Keahlian</span>
-                <strong>{{ count($skillItems) }}</strong>
-                <span class="summary-caption">keahlian dicatat</span>
-            </article>
-            <article class="summary-card">
-                <span class="summary-icon icon-green"><i class="fa-solid fa-award" aria-hidden="true"></i></span>
-                <span class="summary-label">Pencapaian</span>
-                <strong>{{ count($awardItems) }}</strong>
-                <span class="summary-caption">pencapaian / sertifikat</span>
-            </article>
-        </section>
-
-        <section class="workspace-grid">
-            <div class="workspace-column">
-                <article class="content-card profile-card">
-                    <div class="card-heading">
-                        <div>
-                            <span class="eyebrow">PROFIL SAYA</span>
-                            <h2>Ringkasan Profil</h2>
-                        </div>
-                        @if ($cv)
-                            <a class="icon-action" href="{{ route('biodata.edit', $cv) }}" aria-label="Edit CV">
-                                <i class="fa-solid fa-pen" aria-hidden="true"></i>
-                            </a>
-                        @endif
-                    </div>
-                    @if ($cv)
-                        <div class="profile-hero">
-                            <img class="profile-photo" src="{{ $profilePhoto }}" alt="Foto {{ $cv->name }}">
-                            <div>
-                                <h3>{{ $cv->name }}</h3>
-                                <p>{{ $cv->professional_title ?: 'Curriculum Vitae' }}</p>
-                                <span class="profile-badge"><i class="fa-solid fa-id-card me-1" aria-hidden="true"></i> NIM {{ $cv->nim }}</span>
-                            </div>
-                        </div>
-                        <p class="profile-summary-text">{{ $cv->summary ?: 'Tambahkan ringkasan tentang dirimu melalui tombol edit profil.' }}</p>
-                        <div class="contact-list">
-                            @if ($cv->email)
-                                <a href="mailto:{{ $cv->email }}"><i class="fa-regular fa-envelope" aria-hidden="true"></i>{{ $cv->email }}</a>
-                            @endif
-                            @if ($cv->phone)
-                                <a href="tel:{{ $cv->phone }}"><i class="fa-solid fa-phone" aria-hidden="true"></i>{{ $cv->phone }}</a>
-                            @endif
-                            @if ($cv->address)
-                                <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $cv->address }}</span>
-                            @endif
-                        </div>
-                    @else
-                        <div class="empty-card-state">
-                            <span class="empty-card-icon"><i class="fa-solid fa-user-plus" aria-hidden="true"></i></span>
-                            <h3>Mulai bangun CV-mu</h3>
-                            <p>Lengkapi profil, pengalaman, pendidikan, dan keahlian untuk mengisi dashboard ini.</p>
-                            <a class="btn btn-primary modern-button" href="{{ route('biodata.create') }}">Buat CV sekarang</a>
-                        </div>
-                    @endif
-                </article>
-
-                @foreach ([
-                    ['id' => 'experience', 'eyebrow' => 'PERJALANAN', 'title' => 'Pengalaman', 'items' => $experienceItems, 'dot' => 'dot-blue', 'empty' => 'Pengalaman, proyek, atau kegiatan organisasi akan tampil di sini setelah ditambahkan.'],
-                    ['id' => 'education', 'eyebrow' => 'LATAR BELAKANG', 'title' => 'Pendidikan', 'items' => $educationItems, 'dot' => 'dot-orange', 'empty' => 'Riwayat pendidikan akan tampil di sini setelah ditambahkan.'],
-                ] as $section)
-                    <article class="content-card" id="{{ $section['id'] }}">
-                        <div class="card-heading">
-                            <div>
-                                <span class="eyebrow">{{ $section['eyebrow'] }}</span>
-                                <h2>{{ $section['title'] }}</h2>
-                            </div>
-                            <span class="card-count">{{ count($section['items']) }}</span>
-                        </div>
-                        @forelse ($section['items'] as $item)
-                            <div class="timeline-item">
-                                <span class="timeline-dot {{ $section['dot'] }}"></span>
-                                <p>{{ $item }}</p>
-                            </div>
-                        @empty
-                            <p class="muted-copy">{{ $section['empty'] }}</p>
-                        @endforelse
-                    </article>
-                @endforeach
+            <div class="admin-profile">
+                <span class="profile-avatar">A</span>
+                <span><strong>Admin WashUp</strong><small>Panel pengelola</small></span>
             </div>
 
-            <div class="workspace-column">
-                <article class="content-card" id="skills">
-                    <div class="card-heading">
-                        <div><span class="eyebrow">YANG SAYA KUASAI</span><h2>Keahlian</h2></div>
-                        <i class="fa-solid fa-wand-magic-sparkles heading-icon" aria-hidden="true"></i>
-                    </div>
-                    @forelse ($skillItems as $skill)
-                        <span class="skill-chip">{{ $skill }}</span>
-                    @empty
-                        <p class="muted-copy">Keahlian dan tools yang dikuasai akan tampil di sini setelah ditambahkan.</p>
-                    @endforelse
-                </article>
+            <p class="sidebar-label">MENU UTAMA</p>
+            <nav class="admin-nav" aria-label="Navigasi dashboard">
+                <a class="is-active" href="{{ route('admin.dashboard') }}"><span aria-hidden="true">▦</span> Dashboard</a>
+                <a href="#pesanan"><span aria-hidden="true">▤</span> Pesanan <span class="nav-soon">Segera</span></a>
+                <a href="#layanan"><span aria-hidden="true">✳</span> Layanan &amp; harga <span class="nav-soon">Segera</span></a>
+                <a href="#pelanggan"><span aria-hidden="true">◎</span> Pelanggan <span class="nav-soon">Segera</span></a>
+            </nav>
 
-                <article class="content-card" id="interests">
-                    <div class="card-heading">
-                        <div><span class="eyebrow">DI LUAR KEGIATAN</span><h2>Minat</h2></div>
-                        <i class="fa-solid fa-heart heading-icon icon-heart" aria-hidden="true"></i>
-                    </div>
-                    <p class="{{ $cv?->interests ? 'content-copy' : 'muted-copy' }}">
-                        {{ $cv?->interests ?: 'Minat dan bidang yang ingin dipelajari akan tampil di sini setelah ditambahkan.' }}
-                    </p>
-                </article>
-
-                <article class="content-card" id="awards">
-                    <div class="card-heading">
-                        <div><span class="eyebrow">PENCAPAIAN</span><h2>Sertifikat &amp; Penghargaan</h2></div>
-                        <i class="fa-solid fa-award heading-icon icon-award" aria-hidden="true"></i>
-                    </div>
-                    @forelse ($awardItems as $award)
-                        <div class="achievement-item">
-                            <span class="achievement-icon"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
-                            <p>{{ $award }}</p>
-                        </div>
-                    @empty
-                        <p class="muted-copy">Sertifikat dan pencapaian akan tampil di sini setelah ditambahkan.</p>
-                    @endforelse
-                </article>
+            <div class="sidebar-bottom">
+                <span class="status-dot"></span>
+                Dashboard prototipe
             </div>
-        </section>
+        </aside>
 
-        <section class="content-card manage-card" id="manage">
-            <div class="card-heading">
-                <div><span class="eyebrow">PENGELOLAAN DATA</span><h2>Kelola CV</h2></div>
-                <div class="d-flex flex-wrap gap-2">
-                    @if ($cv)
-                        <a class="btn btn-outline-primary" href="{{ route('resume') }}">
-                            <i class="fa-solid fa-eye me-2" aria-hidden="true"></i>Lihat CV
-                        </a>
-                    @endif
-                    <a class="btn btn-primary modern-button" href="{{ route('biodata.create') }}">
-                        <i class="fa-solid fa-plus me-2" aria-hidden="true"></i>Tambah CV
-                    </a>
-                    <a class="btn btn-outline-secondary" href="{{ route('pelanggan.index') }}">
-                        <i class="fa-solid fa-users me-2" aria-hidden="true"></i>Data Pelanggan
-                    </a>
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <a class="back-link" href="{{ route('landing') }}">← <span>Kembali ke website</span></a>
+                <div class="topbar-actions">
+                    <span class="topbar-date">{{ now()->translatedFormat('l, d F Y') }}</span>
+                    <span class="topbar-role"><span class="profile-avatar profile-avatar-small">A</span><span><strong>Admin WashUp</strong><small>Panel pengelola</small></span></span>
                 </div>
-            </div>
-            <div class="table-responsive">
-                <table class="table modern-table align-middle mb-0">
-                    <thead>
-                        <tr><th scope="col">Profil</th><th scope="col">NIM</th><th scope="col">Email</th><th scope="col">Nomor HP</th><th scope="col" class="text-end">Aksi</th></tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($biodataEntries as $entry)
-                            <tr>
-                                <td>
-                                    <div class="table-profile">
-                                        <img src="{{ $entry->photo_path ? asset('storage/'.$entry->photo_path) : asset('resume/assets/img/profile.jpg') }}" alt="Foto {{ $entry->name }}">
-                                        <div><strong>{{ $entry->name }}</strong><span>{{ $entry->professional_title ?: 'Curriculum Vitae' }}</span></div>
-                                    </div>
-                                </td>
-                                <td>{{ $entry->nim }}</td>
-                                <td>{{ $entry->email }}</td>
-                                <td>{{ $entry->phone ?: '—' }}</td>
-                                <td class="text-end text-nowrap">
-                                    <a class="btn btn-sm btn-outline-secondary" href="{{ route('biodata.resume', $entry) }}">Lihat CV</a>
-                                    <a class="btn btn-sm btn-outline-primary" href="{{ route('biodata.edit', $entry) }}">Edit</a>
-                                    <form class="d-inline" method="POST" action="{{ route('biodata.destroy', $entry) }}" onsubmit="return confirm('Yakin menghapus CV ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger" type="submit">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="5" class="py-4 text-center text-muted">Belum ada data CV.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <div class="mt-4">{{ $biodataEntries->links('pagination::bootstrap-5') }}</div>
-        </section>
+            </header>
 
-        <footer class="modern-footer">CV Space <span>·</span> Personal CV workspace</footer>
-    </main>
+            <div class="dashboard-content">
+                <div class="prototype-notice" role="status">
+                    <span aria-hidden="true">ⓘ</span>
+                    <p><strong>Mode pratinjau.</strong> Dashboard ini masih berupa desain contoh; angka, status, dan pesanan belum terhubung ke data sebenarnya.</p>
+                </div>
 
-    <script src="{{ asset('assets-admin/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+                <section class="page-heading">
+                    <div>
+                        <p class="eyebrow">WASHUP / PUSAT OPERASIONAL</p>
+                        <h1>Selamat datang, Admin <span>✦</span></h1>
+                        <p>Semua aktivitas laundry dalam satu tampilan.</p>
+                    </div>
+                    <a class="pickup-action" href="{{ route('landing') }}#layanan"><span aria-hidden="true">＋</span> Lihat layanan</a>
+                </section>
+
+                <section class="operations-hero" aria-label="Ringkasan operasional WashUp">
+                    <img class="hero-photo" src="{{ asset('washup/images/laundry-machines.jpg') }}" alt="Deretan mesin cuci di area laundry">
+                    <div class="hero-shade"></div>
+                    <div class="hero-copy">
+                        <span class="hero-kicker"><span class="status-dot"></span> LAUNDRY CARE, MADE SIMPLE</span>
+                        <h2>Pakaian bersih,<br>hari lebih ringan.</h2>
+                        <p>Pantau proses cuci, perawatan, dan pengantaran dengan lebih mudah.</p>
+                        <a href="{{ route('landing') }}#cara-kerja">Pelajari cara kerja <span aria-hidden="true">↗</span></a>
+                    </div>
+                    <div class="hero-floating-card pickup-summary">
+                        <div class="floating-card-heading"><span class="floating-icon">⌖</span><span><small>JADWAL PICKUP</small><strong>Area layanan WashUp</strong></span></div>
+                        <div class="route-preview"><span class="route-dot"></span><span class="route-line"></span><span class="route-dot route-dot-end"></span></div>
+                        <div class="route-labels"><span>Jemput pakaian</span><span>Kembali bersih</span></div>
+                        <div class="route-status"><span>Rute laundry</span><strong><span class="status-dot"></span> Siap melayani</strong></div>
+                    </div>
+                    <div class="hero-floating-card care-summary">
+                        <span class="floating-card-label">PERAWATAN PAKAIAN</span>
+                        <div class="care-graphic" aria-hidden="true"><span>✦</span><span>◌</span><span>✳</span></div>
+                        <strong>Rawat dengan lembut</strong>
+                        <small>Cuci · Keringkan · Lipat</small>
+                    </div>
+                </section>
+
+                <section class="stat-grid" aria-label="Ringkasan layanan">
+                    <article class="stat-card">
+                        <span class="stat-icon stat-icon-lime">▤</span>
+                        <span class="stat-label">Pesanan hari ini</span>
+                        <strong>—</strong>
+                        <small>Menunggu data terhubung</small>
+                        <span class="stat-trend">ORDER</span>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-icon stat-icon-peach">◷</span>
+                        <span class="stat-label">Dalam proses</span>
+                        <strong>—</strong>
+                        <small>Status pengerjaan laundry</small>
+                        <span class="stat-trend">PROSES</span>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-icon stat-icon-blue">♧</span>
+                        <span class="stat-label">Pickup &amp; antar</span>
+                        <strong>—</strong>
+                        <small>Jadwal kurir belum tersedia</small>
+                        <span class="stat-trend">KURIR</span>
+                    </article>
+                    <article class="stat-card" id="pelanggan">
+                        <span class="stat-icon stat-icon-green">◎</span>
+                        <span class="stat-label">Pelanggan aktif</span>
+                        <strong>—</strong>
+                        <small>Menunggu data pelanggan</small>
+                        <span class="stat-trend">PELANGGAN</span>
+                    </article>
+                </section>
+
+                <section class="dashboard-grid">
+                    <article class="panel orders-panel" id="pesanan">
+                        <div class="panel-heading">
+                            <div>
+                                <p class="eyebrow">ALUR PESANAN</p>
+                                <h2>Perjalanan laundry</h2>
+                            </div>
+                            <span class="coming-soon"><span class="status-dot"></span> Alur layanan</span>
+                        </div>
+                        <div class="journey-flow" aria-label="Tahapan layanan laundry">
+                            <div class="journey-step is-current"><span class="journey-icon">⌖</span><span><strong>Pickup</strong><small>Jemput dari rumah</small></span></div>
+                            <span class="journey-connector"></span>
+                            <div class="journey-step"><span class="journey-icon">◌</span><span><strong>Proses cuci</strong><small>Rawat pakaianmu</small></span></div>
+                            <span class="journey-connector"></span>
+                            <div class="journey-step"><span class="journey-icon">✦</span><span><strong>Diantar</strong><small>Kembali lebih segar</small></span></div>
+                        </div>
+                        <div class="empty-state">
+                            <span class="empty-icon" aria-hidden="true">▤</span>
+                            <span class="empty-state-label">PESANAN TERBARU</span>
+                            <h3>Belum ada pesanan untuk ditampilkan</h3>
+                            <p>Daftar pesanan akan muncul di sini setelah modul pemesanan terhubung.</p>
+                        </div>
+                    </article>
+
+                    <article class="panel quick-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <p class="eyebrow">LAYANAN WASHUP</p>
+                                <h2>Perawatan untukmu</h2>
+                            </div>
+                            <a class="panel-more" href="{{ route('landing') }}#layanan" aria-label="Lihat semua layanan">↗</a>
+                        </div>
+                        <a class="service-tile" id="layanan" href="{{ route('landing') }}#layanan">
+                            <span class="service-art service-art-wash"><span>◌</span></span>
+                            <span class="service-details"><small>CUCI HARIAN</small><strong>Cuci &amp; lipat</strong><span>Praktis untuk pakaian sehari-hari</span></span>
+                            <b>↗</b>
+                        </a>
+                        <a class="service-tile" href="{{ route('landing') }}#layanan">
+                            <span class="service-art service-art-care"><span>✦</span></span>
+                            <span class="service-details"><small>PERAWATAN KHUSUS</small><strong>Setrika rapi</strong><span>Tampil segar di setiap aktivitas</span></span>
+                            <b>↗</b>
+                        </a>
+                        <a class="service-tile" href="{{ route('landing') }}#cara-kerja">
+                            <span class="service-art service-art-pickup"><span>⌖</span></span>
+                            <span class="service-details"><small>ANTAR JEMPUT</small><strong>Pickup di rumah</strong><span>Laundry tanpa repot keluar</span></span>
+                            <b>↗</b>
+                        </a>
+                    </article>
+                </section>
+
+                <footer class="dashboard-footer">
+                    <span>© {{ date('Y') }} WashUp Laundry</span>
+                    <span>Dirancang untuk hari yang lebih ringan <span aria-hidden="true">✦</span></span>
+                </footer>
+            </div>
+        </main>
+    </div>
+    <script>
+        if (document.documentElement.classList.contains('motion-ready')) {
+            const revealItems = document.querySelectorAll('.operations-hero, .stat-card, .panel, .dashboard-footer');
+
+            if ('IntersectionObserver' in window) {
+                const revealObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.12 });
+
+                revealItems.forEach((item) => revealObserver.observe(item));
+            } else {
+                revealItems.forEach((item) => item.classList.add('is-visible'));
+            }
+        }
+    </script>
 </body>
 </html>
